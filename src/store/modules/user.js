@@ -1,4 +1,5 @@
 import { getToken, removeToken, setToken } from '@/utils/auth'
+import { login } from '@/api/user'
 
 const state = {
   token: getToken()
@@ -13,7 +14,12 @@ const mutations = {
     removeToken() // 同步缓存
   }
 }
-const actions = {}
+const actions = {
+  async login(context, data) {
+    const result = await login(data)
+    context.commit('setToken', result)
+  }
+}
 
 export default {
   namespaced: true,
