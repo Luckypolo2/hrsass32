@@ -1,8 +1,9 @@
-import { getToken, removeToken, setToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { getToken, removeToken, setTimeStamp, setToken } from '@/utils/auth'
+import { getUserDetailById, getUserInfo, login } from '@/api/user'
 
 const state = {
-  token: getToken()
+  token: getToken(),
+  userInfo: {}
 }
 const mutations = {
   setToken(state, token) {
@@ -12,12 +13,29 @@ const mutations = {
   removeToken(state) {
     state.token = null // 删除vuex的token
     removeToken() // 同步缓存
+  },
+  setUserInfo(state, userInfo) {
+    state.userInfo = userInfo
+  },
+  removeUserInfo(state) {
+    state.userInfo = {}
   }
 }
 const actions = {
   async login(context, data) {
     const result = await login(data)
     context.commit('setToken', result)
+    setTimeStamp() // 登录注入token时间戳
+  },
+  async getUserInfo(context) {
+    const result = await getUserInfo()
+    const baseInfo = await getUserDetailById(result.userId)
+    context.commit('setUserInfo', { ...result, ...baseInfo })
+    return result
+  },
+  logout(context) {
+    context.commit('removeToken')
+    context.commit('removeUserInfo')
   }
 }
 
