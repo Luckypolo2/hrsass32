@@ -31,7 +31,7 @@ service.interceptors.response.use(response => {
     return data
   } else {
     Message.error(message)
-    return Promise.reject(new Error(message)) // 无错误体，新建
+    return Promise.reject(new Error(message)) // 新建错误体，中断程序
   }
 }, error => {
   // token服务端被动检测
