@@ -2,13 +2,13 @@
   <div class="dashboard-container">
     <div class="app-container">
       <el-card class="tree-card">
-        <tree-tools :tree-node="company" :is-root="true" />
+        <tree-tools :tree-node="company" :is-root="true" @addDepts="addDepts" />
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
-          <tree-tools slot-scope="{ data }" :tree-node="data" @delDepts="loadDepartments" />
+          <tree-tools slot-scope="{ data }" :tree-node="data" @delDepts="loadDepartments" @addDepts="addDepts" />
         </el-tree>
       </el-card>
     </div>
-    <add-dept />
+    <add-dept :show-dialog="showDialog" :tree-node="node" />
   </div>
 </template>
 
@@ -29,7 +29,9 @@ export default {
         label: 'name',
         children: 'children'
       },
-      departs: []
+      departs: [],
+      showDialog: false,
+      node: null
     }
   },
   created() {
@@ -38,9 +40,14 @@ export default {
   methods: {
     async loadDepartments() {
       const result = await getDepartments()
-      this.company = { name: result.companyName, manager: '负责人' }
+      this.company = { name: result.companyName, manager: '负责人', id: '' }
       this.departs = tranListToTree(result.depts, '')
       console.log(this.departs)
+    },
+    addDepts(node) {
+      this.showDialog = true
+      this.node = node
+      console.log(node)
     }
   }
 }
