@@ -1,6 +1,6 @@
 <template>
-  <el-dialog title="新增部门" :visible="showDialog">
-    <el-form :model="formData" :rules="rules" label-width="120px">
+  <el-dialog :title="showTitle" :visible="showDialog" @close="btnCancel">
+    <el-form ref="deptForm" :model="formData" :rules="rules" label-width="120px">
       <el-form-item label="部门名称" prop="name">
         <el-input v-model="formData.name" style="width: 80%" aria-placeholder="1-50字符" />
       </el-form-item>
@@ -18,15 +18,15 @@
     </el-form>
     <el-row slot="footer" type="flex" justify="center">
       <el-col :span="6">
-        <el-button type="primary">确定</el-button>
-        <el-button>关闭</el-button>
+        <el-button type="primary" @click="btnOK">确定</el-button>
+        <el-button @click="btnCancel">关闭</el-button>
       </el-col>
     </el-row>
   </el-dialog>
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { addDepartments, getDepartDetail, getDepartments, updateDepartments } from '@/api/departments'
 import { getEmployeesSimple } from '@/api/employees'
 
 export default {
@@ -42,14 +42,27 @@ export default {
     }
   },
   data() {
+    /*
+    * id唯一指定标识 pid同级部门相同
+    * */
     const checkNameRepeat = async(rule, value, callback) => {
+      let isRepeat = false
       const { depts } = await getDepartments()
-      const isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
+      if (this.formData.id) {
+        isRepeat = depts.filter(item => item.pid === this.treeNode.pid && item.id !== this.treeNode.id).some(item => item.name === value)
+      } else {
+        isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
+      }
       isRepeat ? callback(new Error(`${value}已存在`)) : callback()
     }
     const checkCodeRepeat = async(rule, value, callback) => {
       const { depts } = await getDepartments()
-      const isRepeat = depts.some(item => item.code === value && value)
+      let isRepeat = false
+      if (this.formData.id) {
+        isRepeat = depts.filter(item => item.id !== this.treeNode.id).some(item => item.code === value && value)
+      } else {
+        isRepeat = depts.some(item => item.code === value && value)
+      }
       isRepeat ? callback(new Error(`${value}已存在`)) : callback()
     }
     return {
@@ -73,9 +86,46 @@ export default {
       peoples: []
     }
   },
+  computed: {
+    // 表单数据有id则为编辑，无id为新增
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增部门'
+    }
+  },
   methods: {
     async getEmployeesSimple() {
       this.peoples = await getEmployeesSimple()
+    },
+    async getDepartDetail(id) {
+      this.formData = await getDepartDetail(id)
+    },
+    btnOK() {
+      // 手动验证表单
+      this.$refs.deptForm.validate(async isOK => {
+        if (isOK) {
+          if (this.formData.id) {
+            // 编辑接口
+            await updateDepartments(this.formData)
+          } else {
+            // 新增接口
+            await addDepartments({ ...this.formData, pid: this.treeNode.id })
+          }
+          this.$emit('addDepts')
+          this.$emit('update:showDialog', false)
+          // this.$message.success('操作成功')
+          this.formData.id ? this.$message.success('编辑成功') : this.$message.success('添加成功')
+        }
+      })
+    },
+    btnCancel() {
+      this.formData = {
+        name: '',
+        code: '',
+        manager: '',
+        introduce: ''
+      }
+      this.$emit('update:showDialog', false)
+      this.$refs.deptForm.resetFields()
     }
   }
 }

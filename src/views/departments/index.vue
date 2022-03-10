@@ -4,11 +4,11 @@
       <el-card class="tree-card">
         <tree-tools :tree-node="company" :is-root="true" @addDepts="addDepts" />
         <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
-          <tree-tools slot-scope="{ data }" :tree-node="data" @delDepts="loadDepartments" @addDepts="addDepts" />
+          <tree-tools slot-scope="{ data }" :tree-node="data" @delDepts="loadDepartments" @addDepts="addDepts" @editDepts="editDepts" />
         </el-tree>
       </el-card>
     </div>
-    <add-dept :show-dialog="showDialog" :tree-node="node" />
+    <add-dept ref="addDept" :show-dialog.sync="showDialog" :tree-node="node" @addDepts="loadDepartments" />
   </div>
 </template>
 
@@ -48,6 +48,11 @@ export default {
       this.showDialog = true
       this.node = node
       console.log(node)
+    },
+    editDepts(node) {
+      this.showDialog = true
+      this.node = node
+      this.$refs.addDept.getDepartDetail(node.id) // 调用子组件方法
     }
   }
 }
