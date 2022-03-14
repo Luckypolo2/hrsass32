@@ -4,7 +4,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/en' // lang i18n
+import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
 import '@/styles/index.scss' // global css
 
@@ -16,6 +16,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import * as directives from '@/directives' // 自定义指令
+import * as filters from '@/filters' // 过滤器
 
 import Component from '@/components'
 /**
@@ -42,6 +43,12 @@ Vue.use(Component)
 * */
 Object.keys(directives).forEach(key => {
   Vue.directive(key, directives[key])
+})
+/*
+* 注册全局过滤器
+* */
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
 })
 
 Vue.config.productionTip = false
