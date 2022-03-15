@@ -6,8 +6,8 @@
           <span>共{{ page.total }}条记录</span>
         </template>
         <template v-slot:after>
-          <el-button size="small" type="warning">导入</el-button>
-          <el-button size="small" type="danger">导出</el-button>
+          <el-button size="small" type="warning" @click="$router.push('/import')">导入</el-button>
+          <el-button size="small" type="danger" @click="exportExcel">导出</el-button>
           <el-button size="small" type="primary" @click="showDialog = true">新增员工</el-button>
         </template>
       </page-tools>
@@ -44,7 +44,7 @@
         </el-row>
       </el-card>
     </div>
-    <add-employee :show-dialog.sync="showDialog" />
+    <add-employee :show-dialog.sync="showDialog" @updateEmployeeList="loadEmployeesList" />
   </div>
 </template>
 
@@ -99,6 +99,17 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    exportExcel() {
+      import ('@/vendor/Export2Excel').then(excel => {
+        excel.export_json_to_excel({
+          header: ['姓名', '工资'],
+          data: [['小红', 1000], ['小白', 2000]],
+          filename: '员工工资表',
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
+      })
     }
   }
 }

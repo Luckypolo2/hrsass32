@@ -19,3 +19,17 @@ export const delEmployee = (id) => {
     url: `/sys/user/${id}`
   })
 }
+export const addEmployee = (data) => {
+  return request({
+    method: 'POST',
+    url: `/sys/user`,
+    data
+  })
+}
+export const importEmployee = (data) => {
+  return request({
+    method: 'POST',
+    url: `/sys/user/batch`,
+    data
+  })
+}
