@@ -101,13 +101,43 @@ export default {
       }
     },
     exportExcel() {
-      import ('@/vendor/Export2Excel').then(excel => {
+      // 中英对照
+      const headers = {
+        '姓名': 'username',
+        '手机号': 'mobile',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      // 懒加载导出excel模块
+      // import ('@/vendor/Export2Excel').then(excel => {
+      //   excel.export_json_to_excel({
+      //     header: ['姓名', '工资'],
+      //     data: [['小红', 1000], ['小白', 2000]],
+      //     filename: '员工工资表',
+      //     autoWidth: true,
+      //     bookType: 'xlsx'
+      //   })
+      // })
+      import ('@/vendor/Export2Excel').then(async excel => {
+        // 接口获取员工所有列表数据
+        const { rows } = await getEmployeesList({ page: 1, size: this.page.total })
+        const data = this.formJson(headers, rows)
         excel.export_json_to_excel({
-          header: ['姓名', '工资'],
-          data: [['小红', 1000], ['小白', 2000]],
+          header: Object.keys(headers),
+          data,
           filename: '员工工资表',
           autoWidth: true,
           bookType: 'xlsx'
+        })
+      })
+    },
+    formJson(headers, rows) {
+      return rows.map(item => {
+        return Object.keys(headers).map(key => {
+          return item[headers[key]] // headers[key] 获取英文字符串
         })
       })
     }
