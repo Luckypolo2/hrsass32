@@ -30,7 +30,7 @@
           </el-table-column>
           <el-table-column label="操作" sortable align="center">
             <template v-slot="{ row }">
-              <el-button type="text" size="small">查看</el-button>
+              <el-button type="text" size="small" @click="$router.push(`/employees/detail/${row.id}`)">查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
@@ -52,6 +52,7 @@
 import { delEmployee, getEmployeesList } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 import AddEmployee from '@/views/employees/components/AddEmployee'
+import { formatDate } from '@/filters'
 
 export default {
   components: {
@@ -101,6 +102,8 @@ export default {
       }
     },
     exportExcel() {
+      const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+      const merges = ['A1:A2', 'B1:F1', 'G1:G2']
       // 中英对照
       const headers = {
         '姓名': 'username',
@@ -130,13 +133,25 @@ export default {
           data,
           filename: '员工工资表',
           autoWidth: true,
-          bookType: 'xlsx'
+          bookType: 'xlsx',
+          multiHeader,
+          merges
         })
       })
     },
     formJson(headers, rows) {
+      // item是对象  => 转化成只有值的数组 => 数组值的顺序依赖headers  {username: '张三'  }
+      // Object.keys(headers)  => ["姓名", "手机号",...]
       return rows.map(item => {
         return Object.keys(headers).map(key => {
+          // 格式化数据
+          if (headers[key] === 'timeOfEntry' || headers[key] === 'correctionTime') {
+            return formatDate(item[headers[key]])
+          } else if (headers[key] === 'formOfEmployment') {
+            // 查找对应id返回对象
+            const obj = EmployeeEnum.hireType.find(obj => obj.id === item[headers[key]])
+            return obj ? obj.value : '未知'
+          }
           return item[headers[key]] // headers[key] 获取英文字符串
         })
       })
