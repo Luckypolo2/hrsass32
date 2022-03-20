@@ -14,7 +14,14 @@
       <el-card v-loading="loading">
         <el-table border :data="list">
           <el-table-column type="index" label="序号" sortable align="center" />
-          <el-table-column prop="username" label="姓名" sortable align="center" />
+          <el-table-column prop="username" label="姓名" sortable align="left" header-align="center">
+            <template v-slot="{ row }">
+              <div style="margin-left: 30px">
+                <img v-imagerror="require('@/assets/common/head.jpg')" :src="row.staffPhoto" alt="" style="border-radius: 50%; width: 55px; height: 55px; padding: 10px; vertical-align:middle;" class="avatar-username">
+                <span>{{ row.username }}</span>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="workNumber" label="工号" sortable align="center" />
           <el-table-column :formatter="formatEmployment" prop="formOfEmployment" label="聘用形式" sortable align="center" />
           <el-table-column prop="departmentName" label="部门" sortable align="center" />
@@ -160,6 +167,5 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>
