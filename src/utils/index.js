@@ -118,7 +118,7 @@ export function param2Obj(url) {
 
 /**
 * 列表转为树形结构
-* @param {Array} list
+* @param {AxiosResponse<any>} list
 * @param {string} rootValue
 * @returns {Array}
 * */

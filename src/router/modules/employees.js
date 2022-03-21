@@ -15,5 +15,10 @@ export default {
     component: () => import('@/views/employees/Detail'),
     hidden: true,
     meta: { title: '员工详情' }
+  }, {
+    path: 'print/:id',
+    component: () => import('@/components/Print'),
+    hidden: true,
+    meta: { title: '打印' }
   }]
 }

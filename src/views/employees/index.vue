@@ -17,7 +17,7 @@
           <el-table-column prop="username" label="姓名" sortable align="left" header-align="center">
             <template v-slot="{ row }">
               <div style="margin-left: 30px">
-                <img v-imagerror="require('@/assets/common/head.jpg')" :src="row.staffPhoto" alt="" style="border-radius: 50%; width: 55px; height: 55px; padding: 10px; vertical-align:middle;" class="avatar-username">
+                <img v-imagerror="require('@/assets/common/head.jpg')" :src="row.staffPhoto" alt="" style="border-radius: 50%; width: 55px; height: 55px; padding: 10px; vertical-align:middle;" class="avatar-username" @click="showQrCanvas(row.staffPhoto)">
                 <span>{{ row.username }}</span>
               </div>
             </template>
@@ -41,7 +41,7 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="editRole(row.id)">角色</el-button>
               <el-button type="text" size="small" @click="delEmployee(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -52,6 +52,12 @@
       </el-card>
     </div>
     <add-employee :show-dialog.sync="showDialog" @updateEmployeeList="loadEmployeesList" />
+    <el-dialog title="二维码" :visible.sync="showCodeDialog">
+      <el-row type="flex" justify="center">
+        <canvas ref="myCanvas" />
+      </el-row>
+    </el-dialog>
+    <assign-role ref="assignRole" :user-id="userId" :show-role-dialog.sync="showRoleDialog" />
   </div>
 </template>
 
@@ -59,11 +65,14 @@
 import { delEmployee, getEmployeesList } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 import AddEmployee from '@/views/employees/components/AddEmployee'
+import AssignRole from '@/views/employees/components/AssignRole'
 import { formatDate } from '@/filters'
+import Qrcode from 'qrcode'
 
 export default {
   components: {
-    AddEmployee
+    AddEmployee,
+    AssignRole
   },
   data() {
     return {
@@ -74,7 +83,10 @@ export default {
         size: 10,
         total: 0
       },
-      showDialog: false
+      showDialog: false,
+      showCodeDialog: false,
+      showRoleDialog: false,
+      userId: ''
     }
   },
   created() {
@@ -162,6 +174,21 @@ export default {
           return item[headers[key]] // headers[key] 获取英文字符串
         })
       })
+    },
+    showQrCanvas(url) {
+      if (url) {
+        this.showCodeDialog = true
+        this.$nextTick(() => {
+          Qrcode.toCanvas(this.$refs.myCanvas, url)
+        })
+      } else {
+        this.$message.warning('用户未上传头像')
+      }
+    },
+    async editRole(id) {
+      this.userId = id // 给props赋值
+      await this.$refs.assignRole.getUserDetailById(id)
+      this.showRoleDialog = true
     }
   }
 }
