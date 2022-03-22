@@ -44,3 +44,13 @@ export const addRole = (data) => {
     data
   })
 }
+/**
+ * @param {Object} data permIds, id
+ * */
+export const assignPerm = (data) => {
+  return request({
+    method: 'PUT',
+    url: '/sys/role/assignPrem',
+    data
+  })
+}
