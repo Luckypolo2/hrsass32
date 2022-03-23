@@ -1,5 +1,6 @@
 import { getToken, removeToken, setTimeStamp, setToken } from '@/utils/auth'
 import { getUserDetailById, getUserInfo, login } from '@/api/user'
+import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
@@ -36,6 +37,8 @@ const actions = {
   logout(context) {
     context.commit('removeToken')
     context.commit('removeUserInfo')
+    resetRouter() // 重置路由
+    context.commit('permission/setRoutes', [], { root: true }) // 移除vuex中路由表
   }
 }
 

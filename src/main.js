@@ -19,6 +19,7 @@ import * as directives from '@/directives' // 自定义指令
 import * as filters from '@/filters' // 过滤器
 
 import Component from '@/components'
+import checkPermission from '@/mixin/checkPermission'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -38,6 +39,10 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 // 注册全局组件
 Vue.use(Component)
+/*
+* 注册mixin
+* */
+Vue.mixin(checkPermission)
 /*
 * 注册自定义指令
 * */

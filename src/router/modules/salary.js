@@ -2,7 +2,7 @@ import layout from '@/layout'
 
 export default {
   path: '/salary',
-  name: 'salary',
+  name: 'salarys',
   component: layout,
   children: [{ path: '',
     component: () => import('@/views/salary'),

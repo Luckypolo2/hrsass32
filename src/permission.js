@@ -12,9 +12,15 @@ router.beforeEach(async(to, from, next) => {
       next('/')
     } else {
       if (!store.getters.userId) {
-        await store.dispatch('user/getUserInfo')
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // console.log(roles)
+        const routes = await store.dispatch('permission/filterRoutes', roles.menus)
+        // console.log(routes)
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }])
+        next(to.path)
+      } else {
+        next()
       }
-      next()
     }
   } else {
     if (whiteList.indexOf(to.path) > -1) {

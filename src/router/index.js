@@ -68,9 +68,8 @@ export const constantRoutes = [
     component: Layout,
     hidden: true,
     children: [{ path: '', component: () => import('@/views/import') }]
-  },
+  }
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
 ]
 
 export const asyncRouter = [
@@ -87,7 +86,7 @@ export const asyncRouter = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [...constantRoutes, ...asyncRouter]
+  routes: [...constantRoutes]
 })
 
 const router = createRouter()
