@@ -19,14 +19,14 @@ let cdn = { css: [], js: [] }
 const isProd = process.env.NODE_ENV === 'production'
 if (isProd) {
   externals = {
+    'vue': 'Vue',
     'element-ui': 'ELEMENT',
-    'xlsx': 'XLSX',
-    'vue': 'Vue'
+    'xlsx': 'XLSX'
   }
   cdn = {
     css: ['https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/element-ui/2.13.2/theme-chalk/index.css'],
     js: [
-      'https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/2.6.1/vue.min.js',
+      'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/2.6.14/vue.min.js',
       'https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/element-ui/2.13.2/index.js',
       'https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/xlsx/0.18.2/xlsx.full.min.js'
     ]
