@@ -6,6 +6,7 @@ export default {
   component: layout,
   children: [{ path: '',
     component: () => import('@/views/setting'),
+    name: 'setting',
     meta: {
       title: '公司设置',
       icon: 'setting'

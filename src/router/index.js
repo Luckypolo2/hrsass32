@@ -14,6 +14,7 @@ import attendancesRouter from './modules/attendances'
 import salarysRouter from './modules/salary'
 import settingRouter from './modules/setting'
 import socialRouter from './modules/social'
+import userRouter from './modules/user'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -58,7 +59,7 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '面板', icon: 'dashboard' }
     }]
@@ -68,7 +69,8 @@ export const constantRoutes = [
     component: Layout,
     hidden: true,
     children: [{ path: '', component: () => import('@/views/import') }]
-  }
+  },
+  userRouter
   // 404 page must be placed at the end !!!
 ]
 
@@ -84,7 +86,8 @@ export const asyncRouter = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
+  base: 'hr',
   scrollBehavior: () => ({ y: 0 }),
   routes: [...constantRoutes]
 })
